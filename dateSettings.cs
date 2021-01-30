@@ -1,35 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace RateShopperForBooking.com
+namespace RateShopperConsole
 {
-    class ParseDate
+    class dateSettings
     {
-        public DateTime From { get; }
-        public DateTime To { get; }
+        public DateTime Start { get; }
+        public DateTime End { get; }
         public int Step { get; }
 
-        public ParseDate(in DateTime parseFrom, in DateTime parseTo, in int parseStep)
+        public dateSettings(in DateTime start, in DateTime end, in int parseStep)
         {
-            From = parseFrom;
-            To = parseTo;
+            Start = start;
+            End = end;
             Step = parseStep;
         }
 
         public static DateTime GetDateTime(string writeLine = "Введите дату в формате 'ГГГГ-ММ-ДД': ")
         {
             string input;
-            bool isparse;
+            bool isparsed;
             DateTime date;
             do
             {
                 Console.WriteLine(writeLine);
                 input = Console.ReadLine();
-                isparse = DateTime.TryParse(input, out date);
-            } while (!isparse);
+                isparsed = DateTime.TryParse(input, out date);
+            } while (!isparsed);
             return date;
         }
+
         public static int GetInt(string writeLine = "Введите целое число: ")
         {
             string input;

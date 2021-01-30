@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 
-namespace RateShopperForBooking.com
+namespace RateShopperConsole
 {
     class PriceParser
     {
@@ -17,7 +17,7 @@ namespace RateShopperForBooking.com
             var blocks = GetParse(in document, "tr", "js-rt-block-row "); // получаем блоки с категориями номеров и ценами
             List<List<string>> result = new List<List<string>> ();
             foreach (var item in blocks)
-            {
+            { 
                 List<string> _ = new List<string>(); 
                 // парсим названия категорий
                 var category = GetParse(in item, "span", "hprt-roomtype-icon-link "); 
@@ -31,6 +31,7 @@ namespace RateShopperForBooking.com
             }
             return result;
         }
+
         private static IEnumerable<IElement> GetParse(in IElement source, string htmlteg, string htmlclass)
         {
             var block = source.QuerySelectorAll(htmlteg).Where(item => item.ClassName != null && item.ClassName.Contains(htmlclass));
@@ -41,5 +42,11 @@ namespace RateShopperForBooking.com
             var block = source.QuerySelectorAll(htmlteg).Where(item => item.ClassName != null && item.ClassName.Contains(htmlclass));
             return block;
         }
+        private static IEnumerable<IElement> GetParse(in IHtmlDocument source, string htmlteg, string htmlclass)
+        {
+            var block = source.QuerySelectorAll(htmlteg).Where(item => item.ClassName != null && item.ClassName.Contains(htmlclass));
+            return block;
+        }
     }
+    
 }

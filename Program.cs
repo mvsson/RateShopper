@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AngleSharp;
 
 
-namespace RateShopperForBooking.com
+namespace RateShopperConsole
 {
     class Program
     {
@@ -18,21 +16,21 @@ namespace RateShopperForBooking.com
                     "то что между 'booking.com/hotel/ru/' и '.html'");
                 Console.WriteLine("Например: 'ra-nevskiy-44.ru'");
                 string hotelNameInput = Console.ReadLine();
-                var hotel = new HotelURLs(hotelNameInput);
+                var hotel = new URLSettings(hotelNameInput);
 
-                DateTime dateFrom = ParseDate.GetDateTime("С какой даты начать? Введите в формате 'ГГГГ-ММ-ДД':");
+                DateTime dateFrom = dateSettings.GetDateTime("С какой даты начать? Введите в формате 'ГГГГ-ММ-ДД':");
                 while (dateFrom < DateTime.Now)
-                    dateFrom = ParseDate.GetDateTime("Дата начала должна быть в будущем, йопта");
-                DateTime dateTo = ParseDate.GetDateTime("По какую дату будем смотреть? Введите в формате 'ГГГГ-ММ-ДД':");
+                    dateFrom = dateSettings.GetDateTime("Дата начала должна быть в будущем, йопта");
+                DateTime dateTo = dateSettings.GetDateTime("По какую дату будем смотреть? Введите в формате 'ГГГГ-ММ-ДД':");
                 while (dateTo < dateFrom)
-                    dateTo = ParseDate.GetDateTime("Дата конца должна быть после даты начала, йопта");
+                    dateTo = dateSettings.GetDateTime("Дата конца должна быть после даты начала, йопта");
 
-                int dateStep = ParseDate.GetInt("Введите шаг для выбора дат целым числом: \n" +
+                int dateStep = dateSettings.GetInt("Введите шаг для выбора дат целым числом: \n" +
                     "Пы.Сы. При вводе '1' будет собирать цены с каждого дня подряд,\n " +
                     "что может быть долгим при большом периоде\n" +
                     "Пы.Сы.Сы. Когда-нибудь оптимизирую. Может быть. ))0");
 
-                ParseDate parsingDates = new ParseDate(dateFrom, dateTo, dateStep);
+                dateSettings parsingDates = new dateSettings(dateFrom, dateTo, dateStep);
 
                 await StarterAsync(hotel, parsingDates); // основная программа
 
@@ -49,14 +47,15 @@ namespace RateShopperForBooking.com
             }
             Console.WriteLine();
         }
-        public static async Task StarterAsync(HotelURLs hotel, ParseDate dates)
+
+        public static async Task StarterAsync(URLSettings hotel, dateSettings dates)
         {
-            List<string> urladdresses = hotel.getUrlsList(dates);
+            var urlAddresses = hotel.getUrlsList(dates);
             var pricesList = new List<List<List<string>>>();
-            for (int i = 0; i < urladdresses.Count; i++)
+            for (int i = 0; i < urlAddresses.Length; i++)
             {
-                Console.WriteLine($"\nПроисходит магия... Страница: {i + 1}/{urladdresses.Count}");
-                var list_ = await PriceParser.GetPricesAsync(urladdresses[i]);
+                Console.WriteLine($"\nПроисходит магия... Страница: {i + 1}/{urlAddresses.Length}");
+                var list_ = await PriceParser.GetPricesAsync(urlAddresses[i]);
                 pricesList.Add(list_);
             }
             Console.WriteLine();
@@ -65,7 +64,7 @@ namespace RateShopperForBooking.com
             Console.WriteLine($"ПыСы: если между отображаемыми датами больше 1 дня, \n" +
                 $"в этом диапазоне цены соответствуют ближайшему предыдущему значению.");
             Console.WriteLine();
-            DateTime dateCount = dates.From;
+            DateTime dateCount = dates.Start;
             for (int i = 0; i < pricesList.Count; i++)
             {
                 try

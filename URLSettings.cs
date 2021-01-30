@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace RateShopperForBooking.com
+namespace RateShopperConsole
 {
-    class HotelURLs
+    class URLSettings
     {
         string HotelLink { get; }
 
-        public HotelURLs(string hotelLink)
+        public URLSettings(string hotelLink)
         {
             HotelLink = hotelLink;
         }
@@ -18,19 +17,19 @@ namespace RateShopperForBooking.com
             string _url = $"https://www.booking.com/hotel/ru/{HotelLink}.html";
             return _url;
         }
-        public List<string> getUrlsList(in ParseDate range)
+        public string[] getUrlsList(in dateSettings range)
         {
             string _url = this.getHotelPage();
             List<string> result = new List<string>();
-            DateTime checkin = range.From;
+            DateTime checkin = range.Start;
             DateTime checkout = checkin.AddDays(1);
-            while (checkin < range.To)
+            while (checkin < range.End)
             {
                 result.Add(_url + $"?checkin={checkin:yyyy-MM-dd};checkout={checkout:yyyy-MM-dd}");
                 checkin = checkin.AddDays(range.Step);
                 checkout = checkout.AddDays(range.Step);
             }
-            return result;
+            return result.ToArray();
         }
         // ?checkin=2021-03-13;checkout=2021-03-14
     }
